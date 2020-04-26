@@ -1,51 +1,17 @@
-language: node_js
-sudo : false
-node_js:
-  - "node"
-  - 9
-  - 8
+language: python
+python:
+  - "2.7"
+  - "3.4"
+  - "3.5"
+  - "3.6"   
+  - "3.7"
+  - "3.8"
+  - "3.8-dev"  
+# command to install dependencies
+install:
+  - pip install -r requirements.txt
+  - pip install .
+# command to run tests
 script:
-  - echo 'Build starts!!'
-  - echo 'Installing Deps!'
-  - echo 'Testing!'
-  - npm run
+  - pytest
 
-after_success:
-
-#docker processes :
-  -docker build -t maxprimex123/squirtlesquad_apigateway:latest .
-  -docker push maxprimex123/squirtlesquad_apigateway:latest
-  -docker build -t maxprimex123/squirtlesquad_sessionmanagement:latest .
-  -docker push maxprimex123/squirtlesquad_sessionmanagement:latest
-  -docker build -t maxprimex123/squirtlesquad_usermanagementl:latest .
-  -docker push maxprimex123/squirtlesquad_usermanagement:latest
-  -docker build -t maxprimex123/squirtlesquad_dataretrieval:latest .
-  -docker push maxprimex123/squirtlesquad_dataretrieval:latest
-  -docker build -t maxprimex123/squirtlesquad_modelexecution:latest .
-  -docker push maxprimex123/squirtlesquad_modelexecution:latest
-  -docker build -t maxprimex123/squirtlesquad_inference:latest .
-  -docker push maxprimex123/squirtlesquad_inference:latest
-
-  -cd SquirtleSquad/Kubes2/
-#delete all containers:
-  -kubectl delete deployment,svc apigateway usermanagement sessionmanagement dataretrieval modelexecution inference
-  -kubectl delete deployment zookeeper-dep kafka-dep
-  -kubectl delete svc zookeeper kafka-service
-
-#create containers
-  -kubectl apply -f message.yml
-  -kubectl apply -f apigateway.yml
-  -kubectl apply -f usermanagement.yml
-  -kubectl apply -f sessionmanagement.yml
-  -kubectl apply -f dataretrieval.yml
-  -kubectl apply -f modelexecution.yml
-  -kubectl apply -f inference.yml
-
-#view pods
-  -kubectl get pods
-
-#view pod logs
-  -kubectl logs <pod name>
-
-#scaling deployments example
-  -kubectl scale deployment/apigateway deployment/usermanagement deployment/sessionmanagement deployment/dataretrieval deployment/modelexecution deployment/inference --replicas=3
